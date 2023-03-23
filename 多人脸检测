@@ -31,3 +31,29 @@ while(True):
 # 最后，关闭所有窗口
 cap.release()
 cv2.destroyAllWindows()
+
+import cv2
+import dlib
+
+# 加载面部检测器
+detector = dlib.get_frontal_face_detector()
+
+# 加载图像
+img = cv2.imread("example.jpg")
+
+# 将图像转换为灰度图像，以便进行面部检测
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# 在图像中查找所有的面部，并将它们存储在faces列表中
+faces = detector(gray)
+
+# 在图像中绘制面部框
+for face in faces:
+    x1, y1, x2, y2 = face.left(), face.top(), face.right(), face.bottom()
+    cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 3)
+
+# 显示结果
+cv2.imshow("Result", img)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
