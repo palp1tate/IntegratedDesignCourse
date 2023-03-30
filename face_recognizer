@@ -2,13 +2,15 @@ import os
 import face_recognition
 import cv2
 import numpy as np
-path = "./ known_pictures"#已知人脸所在的文件夹
+
+path = "./known_pictures"  # 已知人脸所在的文件夹
 person_encodings = []
 person_names = []
-#从路径下加载每个人的人脸图片,进行面部编码
+
+# 从路径下加载每个人的人脸图片,进行面部编码
 imagePaths = [os.path.join(path, f) for f in os.listdir(path)]
 for imagePath in imagePaths:
-    name = os.path.split(imagePath)[- 1].split(".")[0]
+    name = os.path.split(imagePath)[-1].split(".")[0]
     img = face_recognition.load_image_file(imagePath)
 
     person_encoding = face_recognition.face_encodings(img)[0]
@@ -21,36 +23,40 @@ face_names = []
 frame_num = 0
 
 cap = cv2.VideoCapture(0)
-cap. set(3,352)
-cap.set(4,288)
+cap.set(3, 352)
+cap.set(4, 288)
 
-while cap.isOpened( ):
-    ret, frame = cap.read( )
-    rgb_img = frame[ :,:, ::-1]# OpenCV的 BGR格式转换为RGB格式
-    if frame_num % 3 ==0:#每隔3帧图像处理一次
-    #对当前帧人脸定位,并对脸部区域进行面部编码
+while cap.isOpened():
+    ret, frame = cap.read()
+    rgb_img = frame[:, :, ::-1]  # OpenCV的 BGR格式转换为RGB格式
+    if frame_num % 3 == 0:  # 每隔3帧图像处理一次
+        # 对当前帧人脸定位,并对脸部区域进行面部编码
         face_locations = face_recognition.face_locations(rgb_img)
-        face_encodings = face_recognition.face_encodings(rgb_img,face_locations)
+        face_encodings = face_recognition.face_encodings(rgb_img, face_locations)
         face_names = []
         for face_encodings in face_encodings:
-            matches = face_recognition.compare_faces(person_encodings,face_encodings,tolerance = 0.5)#与已知人脸比对
-print(matches)#默认为unknown
-name = "unknown"
+            matches = face_recognition.compare_faces(
+                person_encodings, face_encodings, tolerance=0.5)  # 与已知人脸比对
+            print(matches)  # 默认为unknown
+            name = "unknown"
 
-face_distances = face_recognition.face_distance(person_encodings,face_encodings)
-#计算当前人脸与已知人脸的距离
-print(face_distances)
-best_match = np.argmin(face_distances)
-if matches [best_match]:
-    name = person_names [ best_match]
-face_names.append(name)
-frame_num += 1
-#遍历查找到的人脸,标识结果
-for (top,right,bottom,left),name in zip(face_locations,face_names):
-    cv2.rectangle(frame,(left, top),(right,bottom),(255,255,255),2)
-    cv2.putText(frame,name,(left + 6, bottom - 6),cv2.FONT_HERSHEY_SIMPLEX,0.5,(255,255,255),2)
-    cv2.imshow('Recognizing face',frame)
-    if cv2.waitKey(10)&0xFF == 27:#按Esc键退出
-        break
+            face_distances = face_recognition.face_distance(
+                person_encodings, face_encodings)  # 计算当前人脸与已知人脸的距离
+            print(face_distances)
+            best_match = np.argmin(face_distances)
+            if matches[best_match]:
+                name = person_names[best_match]
+            face_names.append(name)
+    frame_num += 1
+
+    # 遍历查找到的人脸,标识结果
+    for (top, right, bottom, left), name in zip(face_locations, face_names):
+        cv2.rectangle(frame, (left, top), (right, bottom), (255, 255, 255), 2)
+        cv2.putText(frame, name, (left + 6, bottom - 6),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+        cv2.imshow('Recognizing face', frame)
+        if cv2.waitKey(10) & 0xFF == 27:  # 按Esc键退出
+            break
+
 cap.release()
-cv2.destroyAllwindows()
+cv2.destroyAllWindows()
