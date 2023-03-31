@@ -1,16 +1,23 @@
 #include <wiringPi.h>
 #include <softPwm.h>
 #include <stdio.h>
-#define uchar unsigned char
-void makerobo_led_Init(void){
-    softPwmCreate(makerobo_Led_PinRed,0,100);softPwmCreate(makerobo_Led_PinGreen,0,100);
+
+#define makerobo_Led_PinRed 1    // 定义红色 LED 的引脚为 1
+#define makerobo_Led_PinGreen 2  // 定义绿色 LED 的引脚为 2
+
+void makerobo_led_Init(void) {
+    softPwmCreate(makerobo_Led_PinRed, 0, 100);
+    softPwmCreate(makerobo_Led_PinGreen, 0, 100);
 }
-void makerobo_led_ColorSet(uchar r_val,uchar g_val){
-    softPwmWrite(makerobo_Led_PinRed,r_val);softPwmwrite( makerobo_Led_PinGreen,g_val) ;
+
+void makerobo_led_ColorSet(unsigned char r_val, unsigned char g_val) {
+    softPwmWrite(makerobo_Led_PinRed, r_val);
+    softPwmWrite(makerobo_Led_PinGreen, g_val);
 }
+
 int main(void) {
     if (wiringPiSetup() == -1) {
-        printf("setup wiringPi failed ! ");
+        printf("setup wiringPi failed !");
         return 1;
     }
     makerobo_led_Init();
@@ -28,5 +35,3 @@ int main(void) {
     }
     return 0;
 }
-
-
