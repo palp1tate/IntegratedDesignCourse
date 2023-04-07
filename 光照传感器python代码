@@ -1,5 +1,5 @@
 import time
-import wiringpi
+import wiringPi
 
 makerobo_PCF = 120 # 基础管脚120
 makerobo_Dopin0l = 1 # 光敏传感器管脚1
